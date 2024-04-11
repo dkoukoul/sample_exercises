@@ -1,0 +1,36 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exercises</title>
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+</head>
+<body>
+    {{range .}}
+    {{ $exercise := . }}
+    <div>
+        <p>{{.Question}}</p>
+        {{range .Items}}
+        <button onclick="speak('{{.}}')">{{.}}</button>
+        {{end}}
+        <ul>
+            {{range .Answers}}
+            <form htmx-trigger="click" htmx-target="#output" hx-post="/answer">
+                <input type="hidden" name="question" value="{{$exercise.Question}}">
+                <input type="hidden" name="answer" value="{{.}}">
+                <button type="submit">{{.}}</button>
+            </form>
+            {{end}}
+        </ul>
+    </div>
+    {{end}}
+    <div id="output"></div>
+    <script>
+        function speak(text) {
+            var msg = new SpeechSynthesisUtterance(" "+text);
+            msg.lang = 'el-GR';
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+</body>
+</html>
