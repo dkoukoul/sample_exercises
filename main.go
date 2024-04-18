@@ -10,7 +10,15 @@ import (
 	"os"
 )
 
-////////////////////////////////////////////////////////////////////
+type PhonologicRhymePairItems struct {
+	Words   []string `json:"words"`
+	Correct int      `json:"correct"`
+}
+type PhonologicRhymeMatchItems struct {
+	Words   []string `json:"words"`
+	Answers []string `json:"answers"`
+	Correct int      `json:"correct"`
+}
 
 type PhonologicRhymePair struct {
 	Question                 string                     `json:"question"`
@@ -18,20 +26,9 @@ type PhonologicRhymePair struct {
 	PhonologicRhymePairItems []PhonologicRhymePairItems `json:"items"`
 }
 
-type PhonologicRhymePairItems struct {
-	Words   []string `json:"words"`
-	Correct int      `json:"correct"`
-}
-
 type PhonologicRhymeMatch struct {
 	Question                  string                      `json:"question"`
 	PhonologicRhymeMatchItems []PhonologicRhymeMatchItems `json:"items"`
-}
-
-type PhonologicRhymeMatchItems struct {
-	Words   []string `json:"words"`
-	Answers []string `json:"answers"`
-	Correct int      `json:"correct"`
 }
 
 type PhonologicRhymeMultipleMatch struct {
@@ -42,106 +39,83 @@ type PhonologicRhymeMultipleMatch struct {
 }
 
 type PhonologicRhymeSentence struct {
-	Question  string                      `json:"question"`
-	ItemsAnti []PhonologicRhymeMatchItems `json:"items"`
+	Question string                      `json:"question"`
+	Items    []PhonologicRhymeMatchItems `json:"items"`
 }
 
-////////////////////////////////////////////////////////////////////
+type Answer struct {
+	Question string `json:"question"`
+	Answer   string `json:"answer"`
+}
 
-var allExercises []AllExercises
-var exercises1 []Exercise1
-var exercises2 []Exercise2
-var exercises3 []Exercise3
 var answers []Answer
+var phonologicExercises []interface{}
 
-////////////////////////////////////////////////////////////////
+type ExerciseData struct {
+	PhonologicExercises []interface{}
+}
+
+func readJSONFile(filePath string, v interface{}) {
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("Failed to read file: %s", err)
+	}
+
+	err = json.Unmarshal(file, v)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal JSON: %s", err)
+	}
+}
 
 func loadExercises() {
-	// Read the JSON file
-	data, err := os.ReadFile("exercises.json")
-	if err != nil {
-		log.Fatalf("Failed to read JSON file: %v", err)
-	}
+	var exercise1 PhonologicRhymePair
+	readJSONFile("data/PhonologicRhymePair.json", &exercise1)
+	phonologicExercises = append(phonologicExercises, exercise1)
 
-	// Unmarshal JSON data into the temporary slice
-	err = json.Unmarshal(data, &allExercises)
-	if err != nil {
-		log.Fatalf("Failed to unmarshal JSON data: %v", err)
-	}
+	var exercise2 PhonologicRhymeMatch
+	readJSONFile("data/PhonologicRhymeMatch.json", &exercise2)
+	phonologicExercises = append(phonologicExercises, exercise2)
 
-	// Distribute the data into exercises1 and exercises2
-	for _, ex := range allExercises {
-		if len(ex.Items) > 0 {
-			// Exercise1
-			exercises1 = append(exercises1, Exercise1{
-				Question: ex.Question,
-				Items:    ex.Items,
-				Answers:  ex.Answers,
-			})
-		} else if len(ex.Column3) > 0 {
-			// Exercise3
-			exercises3 = append(exercises3, Exercise3{
-				Question: ex.Question,
-				Column3:  ex.Column3,
-				Column4:  ex.Column4,
-			})
-		} else {
-			// Exercise2
-			exercises2 = append(exercises2, Exercise2{
-				Question: ex.Question,
-				Column1:  ex.Column1,
-				Column2:  ex.Column2,
-			})
-		}
-	}
+	var exercise3 PhonologicRhymeMultipleMatch
+	readJSONFile("data/PhonologicRhymeMultipleMatch.json", &exercise3)
+	phonologicExercises = append(phonologicExercises, exercise3)
 
-	log.Println("Successfully loaded exercises")
-
-	// Print parsed data
-	fmt.Println("Exercise 1:")
-	for _, ex := range exercises1 {
-		fmt.Printf("Question: %s\n", ex.Question)
-		fmt.Printf("Items: %v\n", ex.Items)
-		fmt.Printf("Answers: %v\n", ex.Answers)
-	}
-
-	fmt.Println("\nExercise 2:")
-	for _, ex := range exercises2 {
-		fmt.Printf("Question: %s\n", ex.Question)
-		fmt.Printf("Column1: %v\n", ex.Column1)
-		fmt.
-			Printf("Column2: %v\n", ex.Column2)
-	}
-
-	fmt.Println("\nExercise 3:")
-	for _, ex := range exercises3 {
-		fmt.Printf("Question: %s\n", ex.Question)
-		fmt.Printf("Column3: %v\n", ex.Column3)
-		fmt.Printf("Column4: %v\n", ex.Column4)
-	}
-
+	var exercise4 PhonologicRhymeSentence
+	readJSONFile("data/PhonologicRhymeSentence.json", &exercise4)
+	phonologicExercises = append(phonologicExercises, exercise4)
 }
 
 func serveExercises(w http.ResponseWriter, r *http.Request) {
-	// Create an instance of ExerciseData with both sets of exercises
+	// Create an instance of ExerciseData with phonologicExercises
 	exerciseData := ExerciseData{
-		Exercises1: exercises1,
-		Exercises2: exercises2,
-		Exercises3: exercises3,
+		PhonologicExercises: phonologicExercises,
 	}
 
 	// Parse the HTML template
-	tmpl, err := template.ParseFiles("index.html")
+	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
+		"getType": func(i interface{}) string {
+			switch i.(type) {
+			case PhonologicRhymePair:
+				return "PhonologicRhymePair"
+			case PhonologicRhymeMatch:
+				return "PhonologicRhymeMatch"
+			case PhonologicRhymeMultipleMatch:
+				return "PhonologicRhymeMultipleMatch"
+			case PhonologicRhymeSentence:
+				return "PhonologicRhymeSentence"
+			default:
+				return ""
+			}
+		},
+	}).ParseFiles("index.html")
 	if err != nil {
 		log.Fatalf("Failed to parse the HTML template: %v", err)
 	}
-
 	// Execute the HTML template with the ExerciseData instance
 	err = tmpl.Execute(w, exerciseData)
 	if err != nil {
 		log.Fatalf("Failed to execute the HTML template: %v", err)
 	}
-
 }
 
 func handleAnswer(w http.ResponseWriter, r *http.Request) {

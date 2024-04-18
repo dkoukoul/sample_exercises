@@ -17,12 +17,12 @@
 
 </head>
 <body>
-    {{range .Exercises1}}
-    {{ $exercise1 := . }}
+    {{range .PhonologicExercises}}
+    {{ $exercise := . }}
     <div>
         <p>{{.Question}}</p>
         {{range .Items}}
-        <button onclick="speak('{{.}}')">{{.}}</button>
+        <button onclick="speak('{{.Words}}')">{{.Words}}</button>
         {{end}}
         <ul>
             {{range .Answers}}
