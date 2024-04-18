@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -14,7 +15,13 @@ type PhonologicRhymePairItems struct {
 	Correct int      `json:"correct"`
 }
 type PhonologicRhymeMatchItems struct {
-	Words   []string `json:"words"`
+	Word    string   `json:"word"`
+	Answers []string `json:"answers"`
+	Correct int      `json:"correct"`
+}
+
+type PhonologicRhymeSentenceItems struct {
+	Sentence    string   `json:"sentence"`
 	Answers []string `json:"answers"`
 	Correct int      `json:"correct"`
 }
@@ -33,13 +40,14 @@ type PhonologicRhymeMatch struct {
 type PhonologicRhymeMultipleMatch struct {
 	Question string         `json:"question"`
 	Column1  []string       `json:"column1"`
-	Column2  []string       `json:"items"`
+	Column2  []string       `json:"column2"`
 	Answers  map[string]int `json:"answers"`
 }
 
 type PhonologicRhymeSentence struct {
-	Question string                      `json:"question"`
-	Items    []PhonologicRhymeMatchItems `json:"items"`
+	Question                  string                      `json:"question"`
+	Sentence  			  string                      `json:"sentence"`
+	PhonologicRhymeSentenceItems []PhonologicRhymeSentenceItems `json:"items"`
 }
 
 type Answer struct {
@@ -47,12 +55,19 @@ type Answer struct {
 	Answer   string `json:"answer"`
 }
 
-var answers []Answer
-var phonologicExercises []interface{}
-
-type ExerciseData struct {
-	PhonologicExercises []interface{}
+type PhonologicExercises struct {
+	PhonologicRhymePair          PhonologicRhymePair
+	PhonologicRhymeMatch         PhonologicRhymeMatch
+	PhonologicRhymeMultipleMatch PhonologicRhymeMultipleMatch
+	PhonologicRhymeSentence      PhonologicRhymeSentence
 }
+
+var answers []Answer
+
+var phonologicRhymePairExercise PhonologicRhymePair
+var phonologicRhymeMatchExercise PhonologicRhymeMatch
+var phonologicRhymeMultipleMatchExercise PhonologicRhymeMultipleMatch
+var phonologicRhymeSentenceExercise PhonologicRhymeSentence
 
 func readJSONFile(filePath string, v interface{}) {
 	file, err := os.ReadFile(filePath)
@@ -67,60 +82,28 @@ func readJSONFile(filePath string, v interface{}) {
 }
 
 func loadExercises() {
-	var exercise1 PhonologicRhymePair
-	readJSONFile("data/PhonologicRhymePair.json", &exercise1)
-	phonologicExercises = append(phonologicExercises, exercise1)
 
-	var exercise2 PhonologicRhymeMatch
-	readJSONFile("data/PhonologicRhymeMatch.json", &exercise2)
-	phonologicExercises = append(phonologicExercises, exercise2)
+	readJSONFile("data/PhonologicRhymePair.json", &phonologicRhymePairExercise)
 
-	var exercise3 PhonologicRhymeMultipleMatch
-	readJSONFile("data/PhonologicRhymeMultipleMatch.json", &exercise3)
-	phonologicExercises = append(phonologicExercises, exercise3)
+	readJSONFile("data/PhonologicRhymeMatch.json", &phonologicRhymeMatchExercise)
 
-	var exercise4 PhonologicRhymeSentence
-	readJSONFile("data/PhonologicRhymeSentence.json", &exercise4)
-	phonologicExercises = append(phonologicExercises, exercise4)
+	readJSONFile("data/PhonologicRhymeMultipleMatch.json", &phonologicRhymeMultipleMatchExercise)
+
+	readJSONFile("data/PhonologicRhymeSentence.json", &phonologicRhymeSentenceExercise)
+	fmt.Println(phonologicRhymePairExercise)
 }
 
 func serveExercises(w http.ResponseWriter, r *http.Request) {
 	// Create an instance of ExerciseData with phonologicExercises
-	exerciseData := ExerciseData{
-		PhonologicExercises: phonologicExercises,
+	exerciseData := PhonologicExercises{
+		PhonologicRhymePair:          phonologicRhymePairExercise,
+		PhonologicRhymeMatch:         phonologicRhymeMatchExercise,
+		PhonologicRhymeMultipleMatch: phonologicRhymeMultipleMatchExercise,
+		PhonologicRhymeSentence:      phonologicRhymeSentenceExercise,
 	}
 
 	// Parse the HTML template
-	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
-		"getType": func(i interface{}) string {
-			switch i.(type) {
-			case PhonologicRhymePair:
-				return "PhonologicRhymePair"
-			case PhonologicRhymeMatch:
-				return "PhonologicRhymeMatch"
-			case PhonologicRhymeMultipleMatch:
-				return "PhonologicRhymeMultipleMatch"
-			case PhonologicRhymeSentence:
-				return "PhonologicRhymeSentence"
-			default:
-				return ""
-			}
-		},
-		"getItems": func(i interface{}) interface{} {
-            switch v := i.(type) {
-            case PhonologicRhymePair:
-                return v.PhonologicRhymePairItems
-            case PhonologicRhymeMatch:
-                return v.PhonologicRhymeMatchItems
-            case PhonologicRhymeMultipleMatch:
-                return v.Column2
-            case PhonologicRhymeSentence:
-                return v.Items
-            default:
-                return nil
-            }
-        },
-	}).ParseFiles("index.html")
+	tmpl, err := template.ParseFiles("index.html")
 	if err != nil {
 		log.Fatalf("Failed to parse the HTML template: %v", err)
 	}

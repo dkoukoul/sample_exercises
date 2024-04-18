@@ -4,51 +4,115 @@
 <head>
     <title>Exercises</title>
     <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+    <style>
+    .phonologic-rhyme-pair {
+        padding: 10px;
+        font-size: 16pt;
+    }
+
+    .phonologic-rhyme-pair-item {
+        padding: 10px;
+        font-size: 16pt;
+    }
+    .phonologic-rhyme-pair-item button {
+        padding: 10px;
+        font-size: 14pt;
+        background-color: white;
+    }
+    .phonologic-rhyme-pair-answer button {
+        background-color: aqua;
+    }
+    </style>
 </head>
 <body>
-    {{range .PhonologicExercises}}
-    {{ $exercise := . }}
-    {{if eq (getType .) "PhonologicRhymePair"}}
+    
     <div class="phonologic-rhyme-pair">
-        <p>{{.Question}}</p>
-        {{range (getItems .)}}
-        <button onclick="speak('{{.Words}}')">{{.Words}}</button>
+        <p>{{.PhonologicRhymePair.Question}}</p>
+        {{range .PhonologicRhymePair.PhonologicRhymePairItems}}
+        <div class="phonologic-rhyme-pair-item">
+            {{range .Words}}
+            <button onclick="speak('{{.}}')">{{.}}</button>
+            {{end}}
+            <div class="phonologic-rhyme-pair-answer">
+                <button onclick="submitAnswer('{{.}}','Ναι')">Ναι</button>
+                <button onclick="submitAnswer('{{.}}','Όχι')">Όχι</button>
+            </div>
+        </div>
         {{end}}
-        <!-- Rest of the PhonologicRhymePair handling code -->
     </div>
-    {{else if eq (getType .) "PhonologicRhymeMatch"}}
+    
     <div class="phonologic-rhyme-match">
-        <p>{{.Question}}</p>
-        {{range (getItems .)}}
-        <button onclick="speak('{{.Words}}')">{{.Words}}</button>
-        {{end}}
-        <!-- Rest of the PhonologicRhymeMatch handling code -->
+        <p>{{.PhonologicRhymeMatch.Question}}</p>
+        {{range .PhonologicRhymeMatch.PhonologicRhymeMatchItems}}
+        <div class="phonologic-rhyme-match-item">
+            <p>{{.Word}}</p>
+            <button onclick="speak('{{.Word}}')">Sound</button>
+            <div class="phonologic-rhyme-match-answers">
+            {{range .Answers}}
+                <button onclick="speak('{{.}}')">{{.}}</button>
+                <button onclick="submitAnswer('{{.}}','N')">{{.}}</button>
+            {{end}}
+            </div>
+            {{end}}
     </div>
-    {{else if eq (getType .) "PhonologicRhymeMultipleMatch"}}
+    
     <div class="phonologic-rhyme-multiple-match">
-        <p>{{.Question}}</p>
-        {{range (getItems .)}}
-        <button onclick="speak('{{.Words}}')">{{.Words}}</button>
+        <p>{{.PhonologicRhymeMultipleMatch.Question}}</p>
+        <div class="phonologic-rhyme-multiple-match-column"></div>
+        {{range .PhonologicRhymeMultipleMatch.Column1}}
+            <button onclick="speak('{{.}}')">{{.}}</button>
         {{end}}
-        <!-- Rest of the PhonologicRhymeMultipleMatch handling code -->
+        {{range .PhonologicRhymeMultipleMatch.Column2}}
+            <button onclick="speak('{{.}}')">{{.}}</button>
+        {{end}}
+        </div>
     </div>
-    {{else if eq (getType .) "PhonologicRhymeSentence"}}
+
+
     <div class="phonologic-rhyme-sentence">
-        <p>{{.Question}}</p>
-        {{range (getItems .)}}
-        <button onclick="speak('{{.Words}}')">{{.Words}}</button>
+        <p>{{.PhonologicRhymeSentence.Question}}</p>
+        {{range .PhonologicRhymeSentence.PhonologicRhymeSentenceItems}}
+        <div class="phonologic-rhyme-sentence-item">
+            <p>{{.Sentence}}</p>
+            <div class="phonologic-rhyme-sentence-answers">
+            {{range .Answers}}
+                <button onclick="speak('{{.}}')">{{.}}</button>
+            {{end}}
+            </div>
+        </div>
         {{end}}
-        <!-- Rest of the PhonologicRhymeSentence handling code -->
     </div>
-    {{end}}
-    {{end}}
+    
     <div id="output"></div>
-    <script>
-        function speak(text) {
-            var msg = new SpeechSynthesisUtterance(" "+text);
-            msg.lang = 'el-GR';
-            window.speechSynthesis.speak(msg);
-        }
-    </script>
+    
 </body>
 </html>
+<script>
+    function speak(text) {
+        var msg = new SpeechSynthesisUtterance(" "+text);
+        msg.lang = 'el-GR';
+        window.speechSynthesis.speak(msg);
+    }
+        
+    function submitAnswer(question, answer) {
+        fetch('/answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'question': question,
+                'answer': answer
+            })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            // Handle the response data here
+        }).catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    }
+    </script>
