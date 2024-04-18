@@ -1,0 +1,26 @@
+{
+
+        "question": "Epelexe to swsto wste na omoiokataliktoun oi fraseis",
+        "items":[
+            {
+                "sentence": "ειδα ενα γλαρο πανω στο",
+                "answers": ["ποιημα", "λεξη", "φαρο"],
+                "correct": 2
+            },
+            {
+                "sentence": "ειδα ενα σκυλο να τρωει το .... ",
+                "answers": ["πιατα", "μηλο", "αστερι"],
+                "correct": 1
+            },
+            {
+                "sentence": "μου κοπηκε το χερι οταν επιασα .... ",
+                "answers": ["μαχαιρι", "κουταλι", "πηρουνι"],
+                "correct": 0
+            },
+            {
+                "sentence": "εχω ενα ρολοι και ενα .... ",
+                "answers": ["φορεμα", "κομπολοι", "φασολι"],
+                "correct": 2
+            }
+        ]
+}

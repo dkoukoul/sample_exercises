@@ -1,0 +1,18 @@
+{
+    "question":"Exou idia kataliksi oi lexeis?",
+    "answer": ["Ναι", "Όχι"],
+    "items": [
+        {
+            "words" : ["ρήμα","βήμα"],
+            "correct" : 1
+        },
+        {
+            "words" : ["xelona", "belona"],
+            "correct" : 1
+        },
+        {
+            "words" : ["ouranos", "thalassa"],
+            "correct" : 0
+        }
+    ]
+}

@@ -4,10 +4,21 @@
 <head>
     <title>Exercises</title>
     <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+
+    <style>
+        .selected {
+            background-color:rgb(238, 201, 247); /* Change the background color to indicate selection */
+        }
+
+        button {
+            margin-bottom: 10px; /* Adjust the margin-bottom value as needed */
+        }
+    </style>
+
 </head>
 <body>
-    {{range .}}
-    {{ $exercise := . }}
+    {{range .Exercises1}}
+    {{ $exercise1 := . }}
     <div>
         <p>{{.Question}}</p>
         {{range .Items}}
@@ -15,8 +26,8 @@
         {{end}}
         <ul>
             {{range .Answers}}
-            <form htmx-trigger="click" htmx-target="#output" hx-post="/answer">
-                <input type="hidden" name="question" value="{{$exercise.Question}}">
+            <form hx-post="/answer" hx-vals="true" hx-target="#output">
+                <input type="hidden" name="question" value="{{$exercise1.Question}}">
                 <input type="hidden" name="answer" value="{{.}}">
                 <button type="submit">{{.}}</button>
             </form>
@@ -24,6 +35,54 @@
         </ul>
     </div>
     {{end}}
+    
+    <!-------------------------------------------------------------------------->
+    
+    {{range .Exercises2}}
+    {{ $exercise2 := . }}
+    <p>{{.Question}}</p>
+    <div class="exercise2" style="display: flex;"> <!-- Add class="exercise2" here -->
+        <div class="Column1" style="flex: 1;">
+            <!-- Column1 -->
+            {{range .Column1}}
+            <button onclick="selectItemColumn2_1(this); speak('{{.}}')">{{.}}</button><br>
+            {{end}}
+        </div>
+        <div class="Column2" style="flex: 1;">
+            <!-- Column2 -->
+            {{range .Column2}}
+            <button onclick="selectItemColumn2_2(this); speak('{{.}}')">{{.}}</button><br>
+            {{end}}
+        </div>
+    </div>
+    {{ end }}
+
+    <!--------------------------------------------------------------------------->
+
+    {{range .Exercises3}}
+    {{ $exercise3 := . }}
+    <p>{{.Question}}</p>
+    <div class="exercise3" style="display: flex;"> <!-- Add class="exercise3" here -->
+        <div class="Column3" style="flex: 1;">
+            <!-- Column3 -->
+            {{range .Column3}}
+            <button onclick="selectItemColumn3_3(this); speak('{{.}}')">{{.}}</button><br>
+            {{end}}
+        </div>
+        <div class="Column4" style="flex: 1;">
+            <!-- Column4 -->
+            {{range .Column4}}
+                {{range .}}
+                    <button onclick="selectItemColumn3_4(this); speak('{{.}}')">{{.}}</button>
+                {{end}}
+                <br>
+            {{end}}
+        </div>
+    </div>
+    {{ end }}
+
+    <!--------------------------------------------------------------------------->
+
     <div id="output"></div>
     <script>
         function speak(text) {
@@ -31,6 +90,97 @@
             msg.lang = 'el-GR';
             window.speechSynthesis.speak(msg);
         }
+    
+
+        /*                   EXERCISE 2 FUNCTIONALITY             */
+
+        function selectItemColumn2_1(button) {
+            // Get the parent element of the clicked button
+            var exerciseGroup = button.closest('.exercise2'); // Adjust the class name as needed
+        
+            // Remove 'selected' class from all buttons within the same exercise group column1
+            var buttons = exerciseGroup.querySelectorAll('.Column1 button');
+
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = ''; // Remove the blue color
+            });
+        
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+        }
+
+
+        function selectItemColumn2_2(button) {
+            // Get the parent element of the clicked button
+            var exerciseGroup = button.closest('.exercise2'); // Adjust the class name as needed
+        
+            // Remove 'selected' class from all buttons within the same exercise group column2
+            var buttons = exerciseGroup.querySelectorAll('.exercise2 > div:last-child button');
+
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = ''; // Remove the blue color
+            });
+        
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+        }
+
+
+        /*                   EXERCISE 3 FUNCTIONALITY              */
+
+        function selectItemColumn3_3(button) {
+            // Get the parent element of the clicked button
+            var exerciseGroup = button.closest('.exercise3'); // Adjust the class name as needed
+        
+            // Remove 'selected' class from all buttons within the same exercise group column1
+            var buttons = exerciseGroup.querySelectorAll('.exercise3 > div:first-child button');
+
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = ''; // Remove the blue color
+            });
+        
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+        }
+
+
+        function selectItemColumn3_4(button) {
+            // Get the parent element of the clicked button
+            var exerciseGroup = button.closest('.exercise3'); // Adjust the class name as needed
+        
+            // Remove 'selected' class from all buttons within the same exercise group column2
+            var buttons = exerciseGroup.querySelectorAll('.Column4 button');
+
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = ''; // Remove the blue color
+            });
+        
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+        }
+
+
+        /*
+        function selectItem(button) {
+            // Get the parent element of the clicked button
+            var exerciseGroup = button.closest('.exercise2, .exercise3'); // Adjust the class name as needed
+        
+            // Remove 'selected' class from all buttons within the same exercise group
+            var buttons = exerciseGroup.querySelectorAll('button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+        
+            // Add 'selected' class to the clicked button
+            button.classList.add('selected');
+        }
+        
+        */
+
     </script>
 </body>
 </html>
