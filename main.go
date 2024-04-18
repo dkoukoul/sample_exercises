@@ -3,7 +3,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -107,6 +106,20 @@ func serveExercises(w http.ResponseWriter, r *http.Request) {
 				return ""
 			}
 		},
+		"getItems": func(i interface{}) interface{} {
+            switch v := i.(type) {
+            case PhonologicRhymePair:
+                return v.PhonologicRhymePairItems
+            case PhonologicRhymeMatch:
+                return v.PhonologicRhymeMatchItems
+            case PhonologicRhymeMultipleMatch:
+                return v.Column2
+            case PhonologicRhymeSentence:
+                return v.Items
+            default:
+                return nil
+            }
+        },
 	}).ParseFiles("index.html")
 	if err != nil {
 		log.Fatalf("Failed to parse the HTML template: %v", err)
