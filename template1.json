@@ -8,8 +8,8 @@
         },
         {
             "words" : ["xelona", "belona"],
-            "correct" : 1
-        },
+            "correct" : 0
+        }, 
         {
             "words" : ["ouranos", "thalassa"],
             "correct" : 0
