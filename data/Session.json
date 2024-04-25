@@ -2,11 +2,26 @@
   {
     "section": 1,
     "level": 1,
-    "exercise": 0
+    "exercise": 1
   },
   {
     "section": 1,
     "level": 1,
     "exercise": 2
+  },
+  {
+    "section": 1,
+    "level": 1,
+    "exercise": 3
+  },
+  {
+    "section": 1,
+    "level": 1,
+    "exercise": 4
+  },
+  {
+    "section": 1,
+    "level": 1,
+    "exercise": 5
   }
 ]

@@ -133,6 +133,7 @@ func loadExercises(sessions []Session) {
 		// filter PhonologicRhymePair exercises
 		for _, exercise_rp := range phonologicRhymePairExercise {
 			if exercise_rp.Section == session.Section && exercise_rp.Level == session.Level && exercise_rp.ExerciseNumber == session.Exercise {
+				// log.Println("Selected Exercise: ", exercise_rp)
 				filtered_phonologicRhymePairExercise = append(filtered_phonologicRhymePairExercise, exercise_rp)
 			}
 		}
@@ -140,6 +141,7 @@ func loadExercises(sessions []Session) {
 		// filter PhonologicRhymeMatch exercises
 		for _, exercise_rm := range phonologicRhymeMatchExercise {
 			if exercise_rm.Section == session.Section && exercise_rm.Level == session.Level && exercise_rm.ExerciseNumber == session.Exercise {
+				// log.Println("Selected Exercise: ", exercise_rm)
 				filtered_phonologicRhymeMatch = append(filtered_phonologicRhymeMatch, exercise_rm)
 			}
 		}
@@ -147,6 +149,7 @@ func loadExercises(sessions []Session) {
 		//filter PhonologicRhymeMultipleMatch exercises
 		for _, exercise_rmm := range phonologicRhymeMultipleMatchExercise {
 			if exercise_rmm.Section == session.Section && exercise_rmm.Level == session.Level && exercise_rmm.ExerciseNumber == session.Exercise {
+				// log.Println("Selected Exercise: ", exercise_rmm)
 				filtered_phonologicRhymeMultipleMatch = append(filtered_phonologicRhymeMultipleMatch, exercise_rmm)
 			}
 		}
@@ -154,6 +157,7 @@ func loadExercises(sessions []Session) {
 		//filter PhonologicRhymeSentence exercises
 		for _, exercise_rs := range phonologicRhymeSentenceExercise {
 			if exercise_rs.Section == session.Section && exercise_rs.Level == session.Level && exercise_rs.ExerciseNumber == session.Exercise {
+				//log.Println("Selected Exercise: ", exercise_rs)
 				filtered_phonologicSentence = append(filtered_phonologicSentence, exercise_rs)
 			}
 		}
@@ -220,11 +224,11 @@ func handleAnswer(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	sessions := loadSession()
-	log.Println("Sessions:", sessions)
 
 	loadExercises(sessions)
 
-	http.HandleFunc("/", serveExercises)
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
+	http.HandleFunc("/exercises", serveExercises)
 	http.HandleFunc("/answer", handleAnswer)
 
 	log.Println("Starting server on port 8080")

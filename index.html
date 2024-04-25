@@ -4,87 +4,76 @@
 <head>
     <title>Exercises</title>
     <script src="https://unpkg.com/htmx.org@1.6.1"></script>
-    <style>
-    .phonologic-rhyme-pair {
-        padding: 10px;
-        font-size: 16pt;
-    }
-
-    .phonologic-rhyme-pair-item {
-        padding: 10px;
-        font-size: 16pt;
-    }
-    .phonologic-rhyme-pair-item button {
-        padding: 10px;
-        font-size: 14pt;
-        background-color: white;
-    }
-    .phonologic-rhyme-pair-answer button {
-        background-color: aqua;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/assets/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Play&display=swap">
 </head>
 <body>
-    
-    <!-- Template 1 -->
-    <h1>Template 1</h1>
-    <div class="phonologic-rhyme-pair">
+    <div class="content">
+        <!-- Template 1 -->
         {{range .PhonologicRhymePair}}
-            <p>{{.Question}}</p>
-            {{range .PhonologicRhymePairItems}}
-            <div class="phonologic-rhyme-pair-item">
+        <div class="phonologic-rhyme-pair template">
+            <h1>{{.Question}}</h1>
+            {{range $index, $_ := .PhonologicRhymePairItems}}
+            {{if eq $index 0}}
+            <div class="phonologic-rhyme-pair-item i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideInFromRight; display: block;">
+            {{else}}
+            <div class="phonologic-rhyme-pair-item i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideOutToLeft; display: none;">
+            {{end}}
                 {{range .Words}}
-                <button onclick="speak('{{.}}')">{{.}}</button>
+                <div class="speak-word" onclick="speak('{{.}}')">{{.}}</div>
                 {{end}}
                 <div class="phonologic-rhyme-pair-answer">
-                    <button onclick="submitAnswer('{{.}}','Ναι')">Ναι</button>
-                    <button onclick="submitAnswer('{{.}}','Όχι')">Όχι</button>
+                    <button onclick="nextQuestion('.phonologic-rhyme-pair-item')">Ναι</button>
+                    <button onclick="nextQuestion('.phonologic-rhyme-pair-item')">Όχι</button>
                 </div>
             </div>
             {{end}}
+        </div>
         {{end}}
-    </div>
-    
-    <!-- Template 2 -->
-    <h1>Template 2</h1>
-    <div class="phonologic-rhyme-match">
-        {{range .PhonologicRhymeMatch}}
-            <p>{{.Question}}</p>
-            {{range .PhonologicRhymeMatchItems}}
-            <div class="phonologic-rhyme-match-item">
-                <p>{{.Word}}</p>
-                <button onclick="speak('{{.Word}}')">Sound</button>
+
+        <!-- Template 2 -->
+        {{range $templateIndex, $_ := .PhonologicRhymeMatch}}
+        <div class="phonologic-rhyme-match template">
+            <h1>{{.Question}}</h1>
+            {{range $index, $_ := .PhonologicRhymeMatchItems}}
+            {{if eq $index 0}}
+            <div class="phonologic-rhyme-match-item t_{{$templateIndex}} i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideInFromRight; display: block;">
+            {{else}}
+            <div class="phonologic-rhyme-match-item t_{{$templateIndex}} i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideOutToLeft; display: none;">
+            {{end}}
+                <div class="speak-word main-match" onclick="speak('{{.Word}}')">{{.Word}}</div>
                 <div class="phonologic-rhyme-match-answers">
                 {{range .Answers}}
-                    <button onclick="speak('{{.}}')">{{.}}</button>
-                    <button onclick="submitAnswer('{{.}}','N')">{{.}}</button>
+                    <div class="speak-word" onclick="speak('{{.}}'); selectAnswer(this);">{{.}}</div>
                 {{end}}
                 </div>
-                {{end}}
+                <button onclick="nextQuestion('.phonologic-rhyme-match-item.t_{{$templateIndex}}')">Επόμενο</button>
+            </div>
+            {{end}}
+        </div>
         {{end}}
-    </div>
-    
-    <!-- Template 3 -->
-    <h1>Template 3</h1>
-    <div class="phonologic-rhyme-multiple-match">
+        
+        <!-- Template 3 -->
         {{range .PhonologicRhymeMultipleMatch}}
-            <p>{{.Question}}</p>
-            <div class="phonologic-rhyme-multiple-match-column"></div>
+        <div class="phonologic-rhyme-multiple-match template">
+            <h1>{{.Question}}</h1>
+            <div class="phonologic-rhyme-multiple-match-column">
             {{range .Column1}}
-                <button onclick="speak('{{.}}')">{{.}}</button>
+                <div class="dropzone">
+                    <div class="speak-word-short" onclick="speak('{{.}}')">{{.}}</div>
+                </div>
             {{end}}
             {{range .Column2}}
-                <button onclick="speak('{{.}}')">{{.}}</button>
+                <div class="speak-word-short" draggable="true" ondragstart="drag(event)" onclick="speak('{{.}}')">{{.}}</div>
             {{end}}
             </div>
+        </div>
         {{end}}
-    </div>
-
-    <!-- Template 4 -->
-    <h1>Template 4</h1>
-    <div class="phonologic-rhyme-sentence">
+        
+        <!-- Template 4 -->
         {{range .PhonologicRhymeSentence}}
-            <p>{{.Question}}</p>
+        <div class="phonologic-rhyme-sentence template">
+            <h1>{{.Question}}</h1>
             {{range .PhonologicRhymeSentenceItems}}
             <div class="phonologic-rhyme-sentence-item">
                 <p>{{.Sentence}}</p>
@@ -95,9 +84,11 @@
                 </div>
             </div>
             {{end}}
+        </div>
         {{end}}
-    </div>
+
     
+    </div> <!-- content -->
     <div id="output"></div>
     
 </body>
@@ -130,4 +121,130 @@
             console.error('There has been a problem with your fetch operation:', error);
         });
     }
-    </script>
+
+    function hideExercises() {
+        let selectedIndex = 3; // 1;
+        let templateDivs = document.querySelectorAll('.template');
+        for(let i = 0; i < templateDivs.length; i++) {
+            if(i === selectedIndex) {
+                templateDivs[i].style.display = 'block';
+            } else {
+                templateDivs[i].style.display = 'none';
+            }
+        }
+    }
+
+    hideExercises();
+
+    function nextExercise() {
+        console.log('Next exercise');
+        let templateDivs = document.querySelectorAll('.template');
+        let currentTemplate = 0;
+        for(let i = 0; i < templateDivs.length; i++) {
+            if (templateDivs[i].style.display === 'block') {
+                currentTemplate = i;
+                console.log(currentTemplate);
+                break;
+            }
+        }
+        templateDivs[currentTemplate].style.display = 'none';
+        templateDivs[(currentTemplate + 1) % templateDivs.length].style.display = 'block';
+    }
+
+    let currentQuestion = 0;
+    function updateQuestion(back = false, templateClass) {
+        let questions = document.querySelectorAll(templateClass);
+        console.log(`Template: ${templateClass}`);
+        let curQ, nexQ = 0;
+        if (back) {
+            curQ = currentQuestion + 1;
+            nexQ = currentQuestion;
+        } else {
+            curQ = currentQuestion - 1;
+            nexQ = currentQuestion;
+        }
+        console.log(`Questions: ${questions.length} next:${nexQ}`);
+        let currQuestion = document.querySelector(`${templateClass}.i_${curQ}`);
+        let nextQuestion = document.querySelector(`${templateClass}.i_${nexQ}`);
+
+        //Hide the current question
+        if (back) {
+            currQuestion.style.animation = 'slideOutToRight 0.6s forwards';
+            setTimeout(() => {
+                nextQuestion.style.display = 'block';
+                nextQuestion.style.animation = 'slideInFromLeft 0.6s backwards';
+            }, 600);
+        } else {
+            currQuestion.style.animation = 'slideOutToLeft 0.6s forwards';
+            setTimeout(() => {
+                nextQuestion.style.display = 'block';
+                nextQuestion.style.animation = 'slideInFromRight 0.6s backwards';
+            }, 600);
+        }
+        
+        setTimeout(() => {
+            currQuestion.style.display = 'none';
+        }, 600);
+        
+        //progressIndicator.textContent = `${currentQuestion + 1} / ${questions.length}`;
+    }
+
+    function nextQuestion(templateClass) {
+        console.log(templateClass);
+        let questions = document.querySelectorAll(templateClass);
+        if (currentQuestion === questions.length - 1) {
+            currentQuestion = 0;
+            nextExercise();
+            return;
+        }
+        currentQuestion = (currentQuestion + 1) % questions.length;
+        updateQuestion(false, templateClass);
+    }
+
+    function selectAnswer(element) {
+        let parent = element.parentNode;
+        let sameClassElements = parent.getElementsByClassName(element.className);
+        for (let i = 0; i < sameClassElements.length; i++) {
+            sameClassElements[i].classList.remove('selected');
+        }
+        element.classList.add('selected');
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    // JavaScript
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var nodeCopy = document.getElementById(data).cloneNode(true);
+        nodeCopy.id = "newId"; 
+        ev.target.appendChild(nodeCopy);
+    }
+
+    // Add event listeners to the dropzones
+    var dropzones = document.querySelectorAll('.dropzone');
+    dropzones.forEach(function(dropzone) {
+        dropzone.addEventListener('dragover', allowDrop);
+        dropzone.addEventListener('drop', drop);
+    });
+// function sendAnswers() {
+//     const radioButtons = document.querySelectorAll('input[type="radio"]');
+//     // Filter out the ones that are checked and map to their values
+//     const answers = Array.from(radioButtons)
+//         .filter(radio => radio.checked)
+//         .map(radio => radio.value);
+    
+//     // console.log(answers);
+//     var message = {
+//         type: 'AnswersSubmitted',
+//         answers: answers
+//     };
+//     window.chrome.webview.postMessage(message);
+// }
+</script>

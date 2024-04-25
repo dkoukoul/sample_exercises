@@ -1,0 +1,217 @@
+:root {
+    --dark-blue: #3f51b5;
+    --dark-blue-hover: #303f9f;
+    --dark-blue-selected: #0d4f4d;
+    --white: #fff;
+    --grey: #333;
+    --button: #3f444f;
+}
+
+body {
+    font-family: Play, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Adjust this as needed */
+}
+
+.phonologic-rhyme-pair {
+    padding: 10px;
+    font-size: 16pt;
+}
+
+.phonologic-rhyme-pair-item {
+    padding: 10px;
+    font-size: 16pt;
+    text-align: center;
+    border-top: 3px solid #333;
+}
+
+.phonologic-rhyme-match-answers {
+    padding: 20px;
+}
+
+.phonologic-rhyme-match-item {
+    padding: 20px;
+    text-align: center;
+    border-top: 3px solid #333;
+}
+
+.phonologic-rhyme-match-item button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6em 1.2em;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--button);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-inline: 60px;
+}
+
+.phonologic-rhyme-match-answers button:hover {
+    background-color: var(--dark-blue-hover);
+}
+
+.phonologic-rhyme-pair-item button {
+    padding: 10px;
+    font-size: 14pt;
+    background-color: white;
+}
+
+.phonologic-rhyme-pair-answer {
+    padding: 30px;
+    font-size: 16pt;
+}
+
+.phonologic-rhyme-pair-answer button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6em 1.2em;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--button);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-inline: 10px;
+}
+
+.dropzone {
+    border: 1px solid #aaa;
+    width: 500px;
+    margin-bottom: 10px;
+}
+
+.main-match {
+    margin: 50px;
+    font-size: 2.4rem;
+}
+
+.speak-word-short {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2em 1.2em;
+    font-size: 1.0rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--dark-blue);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.speak-word {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em 1.2em;
+    font-size: 1.9rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--dark-blue);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-inline: 60px;
+}
+
+.speak-word:hover {
+    background-color: var(--dark-blue-hover);
+}
+
+.speak-word-short:before {
+    content: '';
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
+    background-image: url('/assets/speak.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.speak-word:before {
+    content: '';
+    display: inline-block;
+    height: 48px;
+    width: 48px;
+    margin-right: 8px;
+    background-image: url('/assets/speak.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.speak-word.selected {
+    background-color: var(--dark-blue-selected);
+}
+
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutToLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutToRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+  }
