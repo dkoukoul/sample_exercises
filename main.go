@@ -9,9 +9,16 @@ import (
 	"os"
 )
 
+type Session struct {
+	Section  int `json:"section"`
+	Level    int `json:"level"`
+	Exercise int `json:"exercise"`
+}
+
 type PhonologicRhymePair struct {
 	Question                 string                     `json:"question"`
 	Answer                   []string                   `json:"answer"`
+	Section                  int                        `json:"section"`
 	Level                    int                        `json:"level"`
 	ExerciseNumber           int                        `json:"exercise"`
 	PhonologicRhymePairItems []PhonologicRhymePairItems `json:"items"`
@@ -22,27 +29,23 @@ type PhonologicRhymePairItems struct {
 	Correct int      `json:"correct"`
 }
 
+type PhonologicRhymeMatch struct {
+	Question                  string                      `json:"question"`
+	Section                   int                         `json:"section"`
+	Level                     int                         `json:"level"`
+	ExerciseNumber            int                         `json:"exercise"`
+	PhonologicRhymeMatchItems []PhonologicRhymeMatchItems `json:"items"`
+}
+
 type PhonologicRhymeMatchItems struct {
 	Word    string   `json:"word"`
 	Answers []string `json:"answers"`
 	Correct int      `json:"correct"`
 }
 
-type PhonologicRhymeSentenceItems struct {
-	Sentence string   `json:"sentence"`
-	Answers  []string `json:"answers"`
-	Correct  int      `json:"correct"`
-}
-
-type PhonologicRhymeMatch struct {
-	Question                  string                      `json:"question"`
-	Level                     int                         `json:"level"`
-	ExerciseNumber            int                         `json:"exercise"`
-	PhonologicRhymeMatchItems []PhonologicRhymeMatchItems `json:"items"`
-}
-
 type PhonologicRhymeMultipleMatch struct {
 	Question       string         `json:"question"`
+	Section        int            `json:"section"`
 	Level          int            `json:"level"`
 	ExerciseNumber int            `json:"exercise"`
 	Column1        []string       `json:"column1"`
@@ -52,10 +55,17 @@ type PhonologicRhymeMultipleMatch struct {
 
 type PhonologicRhymeSentence struct {
 	Question                     string                         `json:"question"`
+	Section                      int                            `json:"section"`
 	Level                        int                            `json:"level"`
 	ExerciseNumber               int                            `json:"exercise"`
 	Sentence                     string                         `json:"sentence"`
 	PhonologicRhymeSentenceItems []PhonologicRhymeSentenceItems `json:"items"`
+}
+
+type PhonologicRhymeSentenceItems struct {
+	Sentence string   `json:"sentence"`
+	Answers  []string `json:"answers"`
+	Correct  int      `json:"correct"`
 }
 
 type Answer struct {
@@ -89,22 +99,71 @@ func readJSONFile(filePath string, v interface{}) {
 	}
 }
 
-func loadExercises(exerciseNumber int) {
-	// Filter exercises in phonologicRhymePairExercise with ExerciseNumber == 1
-	readJSONFile("data/PhonologicRhymePair.json", &phonologicRhymePairExercise)
-	filtered := make([]PhonologicRhymePair, 0)
-	for _, exercise := range phonologicRhymePairExercise {
-		if exercise.ExerciseNumber == exerciseNumber {
-			filtered = append(filtered, exercise)
+func loadSession() (sessions []Session) {
+	var data []Session
+	readJSONFile("data/Session.json", &data)
+
+	for _, e := range data {
+		session := Session{
+			Section:  e.Section,
+			Level:    e.Level,
+			Exercise: e.Exercise,
 		}
+		sessions = append(sessions, session)
 	}
-	phonologicRhymePairExercise = filtered
 
+	return sessions
+}
+
+func loadExercises(sessions []Session) {
+
+	// Load aLL
+	readJSONFile("data/PhonologicRhymePair.json", &phonologicRhymePairExercise)
 	readJSONFile("data/PhonologicRhymeMatch.json", &phonologicRhymeMatchExercise)
-
 	readJSONFile("data/PhonologicRhymeMultipleMatch.json", &phonologicRhymeMultipleMatchExercise)
-
 	readJSONFile("data/PhonologicRhymeSentence.json", &phonologicRhymeSentenceExercise)
+
+	// Filter data according to Session input
+	filtered_phonologicRhymePairExercise := make([]PhonologicRhymePair, 0)
+	filtered_phonologicRhymeMatch := make([]PhonologicRhymeMatch, 0)
+	filtered_phonologicRhymeMultipleMatch := make([]PhonologicRhymeMultipleMatch, 0)
+	filtered_phonologicSentence := make([]PhonologicRhymeSentence, 0)
+
+	for _, session := range sessions {
+		// filter PhonologicRhymePair exercises
+		for _, exercise_rp := range phonologicRhymePairExercise {
+			if exercise_rp.Section == session.Section && exercise_rp.Level == session.Level && exercise_rp.ExerciseNumber == session.Exercise {
+				filtered_phonologicRhymePairExercise = append(filtered_phonologicRhymePairExercise, exercise_rp)
+			}
+		}
+
+		// filter PhonologicRhymeMatch exercises
+		for _, exercise_rm := range phonologicRhymeMatchExercise {
+			if exercise_rm.Section == session.Section && exercise_rm.Level == session.Level && exercise_rm.ExerciseNumber == session.Exercise {
+				filtered_phonologicRhymeMatch = append(filtered_phonologicRhymeMatch, exercise_rm)
+			}
+		}
+
+		//filter PhonologicRhymeMultipleMatch exercises
+		for _, exercise_rmm := range phonologicRhymeMultipleMatchExercise {
+			if exercise_rmm.Section == session.Section && exercise_rmm.Level == session.Level && exercise_rmm.ExerciseNumber == session.Exercise {
+				filtered_phonologicRhymeMultipleMatch = append(filtered_phonologicRhymeMultipleMatch, exercise_rmm)
+			}
+		}
+
+		//filter PhonologicRhymeSentence exercises
+		for _, exercise_rs := range phonologicRhymeSentenceExercise {
+			if exercise_rs.Section == session.Section && exercise_rs.Level == session.Level && exercise_rs.ExerciseNumber == session.Exercise {
+				filtered_phonologicSentence = append(filtered_phonologicSentence, exercise_rs)
+			}
+		}
+
+	}
+
+	phonologicRhymePairExercise = filtered_phonologicRhymePairExercise
+	phonologicRhymeMatchExercise = filtered_phonologicRhymeMatch
+	phonologicRhymeMultipleMatchExercise = filtered_phonologicRhymeMultipleMatch
+	phonologicRhymeSentenceExercise = filtered_phonologicSentence
 
 }
 
@@ -160,8 +219,10 @@ func handleAnswer(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	exerciseNumber := 1
-	loadExercises(exerciseNumber)
+	sessions := loadSession()
+	log.Println("Sessions:", sessions)
+
+	loadExercises(sessions)
 
 	http.HandleFunc("/", serveExercises)
 	http.HandleFunc("/answer", handleAnswer)
