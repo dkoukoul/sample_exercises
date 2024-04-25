@@ -26,60 +26,75 @@
 </head>
 <body>
     
+    <!-- Template 1 -->
+    <h1>Template 1</h1>
     <div class="phonologic-rhyme-pair">
-        <p>{{.PhonologicRhymePair.Question}}</p>
-        {{range .PhonologicRhymePair.PhonologicRhymePairItems}}
-        <div class="phonologic-rhyme-pair-item">
-            {{range .Words}}
-            <button onclick="speak('{{.}}')">{{.}}</button>
-            {{end}}
-            <div class="phonologic-rhyme-pair-answer">
-                <button onclick="submitAnswer('{{.}}','Ναι')">Ναι</button>
-                <button onclick="submitAnswer('{{.}}','Όχι')">Όχι</button>
+        {{range .PhonologicRhymePair}}
+            <p>{{.Question}}</p>
+            {{range .PhonologicRhymePairItems}}
+            <div class="phonologic-rhyme-pair-item">
+                {{range .Words}}
+                <button onclick="speak('{{.}}')">{{.}}</button>
+                {{end}}
+                <div class="phonologic-rhyme-pair-answer">
+                    <button onclick="submitAnswer('{{.}}','Ναι')">Ναι</button>
+                    <button onclick="submitAnswer('{{.}}','Όχι')">Όχι</button>
+                </div>
             </div>
-        </div>
+            {{end}}
         {{end}}
     </div>
     
+    <!-- Template 2 -->
+    <h1>Template 2</h1>
     <div class="phonologic-rhyme-match">
-        <p>{{.PhonologicRhymeMatch.Question}}</p>
-        {{range .PhonologicRhymeMatch.PhonologicRhymeMatchItems}}
-        <div class="phonologic-rhyme-match-item">
-            <p>{{.Word}}</p>
-            <button onclick="speak('{{.Word}}')">Sound</button>
-            <div class="phonologic-rhyme-match-answers">
-            {{range .Answers}}
-                <button onclick="speak('{{.}}')">{{.}}</button>
-                <button onclick="submitAnswer('{{.}}','N')">{{.}}</button>
-            {{end}}
-            </div>
-            {{end}}
+        {{range .PhonologicRhymeMatch}}
+            <p>{{.Question}}</p>
+            {{range .PhonologicRhymeMatchItems}}
+            <div class="phonologic-rhyme-match-item">
+                <p>{{.Word}}</p>
+                <button onclick="speak('{{.Word}}')">Sound</button>
+                <div class="phonologic-rhyme-match-answers">
+                {{range .Answers}}
+                    <button onclick="speak('{{.}}')">{{.}}</button>
+                    <button onclick="submitAnswer('{{.}}','N')">{{.}}</button>
+                {{end}}
+                </div>
+                {{end}}
+        {{end}}
     </div>
     
+    <!-- Template 3 -->
+    <h1>Template 3</h1>
     <div class="phonologic-rhyme-multiple-match">
-        <p>{{.PhonologicRhymeMultipleMatch.Question}}</p>
-        <div class="phonologic-rhyme-multiple-match-column"></div>
-        {{range .PhonologicRhymeMultipleMatch.Column1}}
-            <button onclick="speak('{{.}}')">{{.}}</button>
-        {{end}}
-        {{range .PhonologicRhymeMultipleMatch.Column2}}
-            <button onclick="speak('{{.}}')">{{.}}</button>
-        {{end}}
-        </div>
-    </div>
-
-
-    <div class="phonologic-rhyme-sentence">
-        <p>{{.PhonologicRhymeSentence.Question}}</p>
-        {{range .PhonologicRhymeSentence.PhonologicRhymeSentenceItems}}
-        <div class="phonologic-rhyme-sentence-item">
-            <p>{{.Sentence}}</p>
-            <div class="phonologic-rhyme-sentence-answers">
-            {{range .Answers}}
+        {{range .PhonologicRhymeMultipleMatch}}
+            <p>{{.Question}}</p>
+            <div class="phonologic-rhyme-multiple-match-column"></div>
+            {{range .Column1}}
+                <button onclick="speak('{{.}}')">{{.}}</button>
+            {{end}}
+            {{range .Column2}}
                 <button onclick="speak('{{.}}')">{{.}}</button>
             {{end}}
             </div>
-        </div>
+        {{end}}
+    </div>
+
+    <!-- Template 4 -->
+    <h1>Template 4</h1>
+    <div class="phonologic-rhyme-sentence">
+        {{range .PhonologicRhymeSentence}}
+            <p>{{.Question}}</p>
+            {{range .PhonologicRhymeSentenceItems}}
+            <div class="phonologic-rhyme-sentence-item">
+                <p>{{.Sentence}}</p>
+                <div class="phonologic-rhyme-sentence-answers">
+                {{range .Answers}}
+                    <button onclick="speak('{{.}}')">{{.}}</button>
+                {{end}}
+                </div>
+            </div>
+            {{end}}
         {{end}}
     </div>
     

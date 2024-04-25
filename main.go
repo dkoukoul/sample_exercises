@@ -3,17 +3,25 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 )
 
+type PhonologicRhymePair struct {
+	Question                 string                     `json:"question"`
+	Answer                   []string                   `json:"answer"`
+	Level                    int                        `json:"level"`
+	ExerciseNumber           int                        `json:"exercise"`
+	PhonologicRhymePairItems []PhonologicRhymePairItems `json:"items"`
+}
+
 type PhonologicRhymePairItems struct {
 	Words   []string `json:"words"`
 	Correct int      `json:"correct"`
 }
+
 type PhonologicRhymeMatchItems struct {
 	Word    string   `json:"word"`
 	Answers []string `json:"answers"`
@@ -21,32 +29,32 @@ type PhonologicRhymeMatchItems struct {
 }
 
 type PhonologicRhymeSentenceItems struct {
-	Sentence    string   `json:"sentence"`
-	Answers []string `json:"answers"`
-	Correct int      `json:"correct"`
-}
-
-type PhonologicRhymePair struct {
-	Question                 string                     `json:"question"`
-	Answer                   []string                   `json:"answer"`
-	PhonologicRhymePairItems []PhonologicRhymePairItems `json:"items"`
+	Sentence string   `json:"sentence"`
+	Answers  []string `json:"answers"`
+	Correct  int      `json:"correct"`
 }
 
 type PhonologicRhymeMatch struct {
 	Question                  string                      `json:"question"`
+	Level                     int                         `json:"level"`
+	ExerciseNumber            int                         `json:"exercise"`
 	PhonologicRhymeMatchItems []PhonologicRhymeMatchItems `json:"items"`
 }
 
 type PhonologicRhymeMultipleMatch struct {
-	Question string         `json:"question"`
-	Column1  []string       `json:"column1"`
-	Column2  []string       `json:"column2"`
-	Answers  map[string]int `json:"answers"`
+	Question       string         `json:"question"`
+	Level          int            `json:"level"`
+	ExerciseNumber int            `json:"exercise"`
+	Column1        []string       `json:"column1"`
+	Column2        []string       `json:"column2"`
+	Answers        map[string]int `json:"answers"`
 }
 
 type PhonologicRhymeSentence struct {
-	Question                  string                      `json:"question"`
-	Sentence  			  string                      `json:"sentence"`
+	Question                     string                         `json:"question"`
+	Level                        int                            `json:"level"`
+	ExerciseNumber               int                            `json:"exercise"`
+	Sentence                     string                         `json:"sentence"`
 	PhonologicRhymeSentenceItems []PhonologicRhymeSentenceItems `json:"items"`
 }
 
@@ -56,18 +64,18 @@ type Answer struct {
 }
 
 type PhonologicExercises struct {
-	PhonologicRhymePair          PhonologicRhymePair
-	PhonologicRhymeMatch         PhonologicRhymeMatch
-	PhonologicRhymeMultipleMatch PhonologicRhymeMultipleMatch
-	PhonologicRhymeSentence      PhonologicRhymeSentence
+	PhonologicRhymePair          []PhonologicRhymePair
+	PhonologicRhymeMatch         []PhonologicRhymeMatch
+	PhonologicRhymeMultipleMatch []PhonologicRhymeMultipleMatch
+	PhonologicRhymeSentence      []PhonologicRhymeSentence
 }
 
 var answers []Answer
 
-var phonologicRhymePairExercise PhonologicRhymePair
-var phonologicRhymeMatchExercise PhonologicRhymeMatch
-var phonologicRhymeMultipleMatchExercise PhonologicRhymeMultipleMatch
-var phonologicRhymeSentenceExercise PhonologicRhymeSentence
+var phonologicRhymePairExercise []PhonologicRhymePair
+var phonologicRhymeMatchExercise []PhonologicRhymeMatch
+var phonologicRhymeMultipleMatchExercise []PhonologicRhymeMultipleMatch
+var phonologicRhymeSentenceExercise []PhonologicRhymeSentence
 
 func readJSONFile(filePath string, v interface{}) {
 	file, err := os.ReadFile(filePath)
@@ -81,16 +89,23 @@ func readJSONFile(filePath string, v interface{}) {
 	}
 }
 
-func loadExercises() {
-
+func loadExercises(exerciseNumber int) {
+	// Filter exercises in phonologicRhymePairExercise with ExerciseNumber == 1
 	readJSONFile("data/PhonologicRhymePair.json", &phonologicRhymePairExercise)
+	filtered := make([]PhonologicRhymePair, 0)
+	for _, exercise := range phonologicRhymePairExercise {
+		if exercise.ExerciseNumber == exerciseNumber {
+			filtered = append(filtered, exercise)
+		}
+	}
+	phonologicRhymePairExercise = filtered
 
 	readJSONFile("data/PhonologicRhymeMatch.json", &phonologicRhymeMatchExercise)
 
 	readJSONFile("data/PhonologicRhymeMultipleMatch.json", &phonologicRhymeMultipleMatchExercise)
 
 	readJSONFile("data/PhonologicRhymeSentence.json", &phonologicRhymeSentenceExercise)
-	fmt.Println(phonologicRhymePairExercise)
+
 }
 
 func serveExercises(w http.ResponseWriter, r *http.Request) {
@@ -145,7 +160,8 @@ func handleAnswer(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	loadExercises()
+	exerciseNumber := 1
+	loadExercises(exerciseNumber)
 
 	http.HandleFunc("/", serveExercises)
 	http.HandleFunc("/answer", handleAnswer)
