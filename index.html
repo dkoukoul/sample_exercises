@@ -71,17 +71,23 @@
         {{end}}
         
         <!-- Template 4 -->
-        {{range .PhonologicRhymeSentence}}
+        {{range $templateIndex, $_ := .PhonologicRhymeSentence}}
         <div class="phonologic-rhyme-sentence template">
             <h1>{{.Question}}</h1>
-            {{range .PhonologicRhymeSentenceItems}}
-            <div class="phonologic-rhyme-sentence-item">
-                <p>{{.Sentence}}</p>
+            {{range $index, $_ := .PhonologicRhymeSentenceItems}}
+                {{if eq $index 0}}
+                <div class="phonologic-rhyme-sentence-item i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideInFromRight; display: block;">
+                {{else}}
+                <div class="phonologic-rhyme-sentence-item i_{{$index}}" style="animation: 0.6s ease 0s 1 normal forwards running slideOutToLeft; display: none;">
+                {{end}}
+                <div class="speak-word main-sentence" onclick="speak('{{.Sentence}}')">{{.Sentence}}</div>
                 <div class="phonologic-rhyme-sentence-answers">
+                    <div class="phonologic-rhyme-sentence-answers"></div>
                 {{range .Answers}}
-                    <button onclick="speak('{{.}}')">{{.}}</button>
+                    <div class="speak-word" onclick="speak('{{.}}'); selectAnswer(this);">{{.}}</div>
                 {{end}}
                 </div>
+                <button onclick="nextQuestion('.phonologic-rhyme-sentence-item')">Επόμενο</button>
             </div>
             {{end}}
         </div>
@@ -218,13 +224,17 @@
         ev.preventDefault();
     }
 
-    // JavaScript
     function drop(ev) {
         ev.preventDefault();
-        var data = ev.dataTransfer.getData("text");
-        var nodeCopy = document.getElementById(data).cloneNode(true);
-        nodeCopy.id = "newId"; 
-        ev.target.appendChild(nodeCopy);
+        var data = ev.dataTransfer.getData("text/plain");
+        var nodeCopy = document.createElement("div");
+        nodeCopy.textContent = data;
+        nodeCopy.classList.add("speak-word-short");
+        nodeCopy.className = "speak-word-short";
+        nodeCopy.setAttribute("draggable", "true");
+        nodeCopy.setAttribute("ondragstart", "drag(event)");  
+        ev.target.appendChild(nodeCopy);    
+
     }
 
     // Add event listeners to the dropzones
@@ -233,6 +243,7 @@
         dropzone.addEventListener('dragover', allowDrop);
         dropzone.addEventListener('drop', drop);
     });
+
 // function sendAnswers() {
 //     const radioButtons = document.querySelectorAll('input[type="radio"]');
 //     // Filter out the ones that are checked and map to their values
