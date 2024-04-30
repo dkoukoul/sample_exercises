@@ -57,17 +57,19 @@
         {{range $templateIndex, $_ := .PhonologicRhymeMultipleMatch}}
         <div class="phonologic-rhyme-multiple-match template">
             <h1>{{.Question}}</h1>
-            <div class="phonologic-rhyme-multiple-match-column t_{{$templateIndex}}">
-            {{range .Column1}}
-                <div class="dropzone">
-                    <div class="speak-word-short" onclick="speak('{{.}}')">{{.}}</div>
+            <div class="phonologic-rhyme-multiple-match t_{{$templateIndex}} i_0">
+                <div class="phonologic-rhyme-multiple-match-column">
+                {{range .Column1}}
+                    <div class="dropzone">
+                        <div class="speak-word" onclick="speak('{{.}}')">{{.}}</div>
+                    </div>
+                {{end}}
                 </div>
-            {{end}}
-            </div>
-            <div class="phonologic-rhyme-multiple-match-column t_{{$templateIndex}}">
-            {{range $index, $_ := .Column2}}
-                <div id="match-{{$index}}" class="speak-word-short" draggable="true" ondragstart="drag(event)" onclick="speak('{{.}}')">{{.}}</div>
-            {{end}}
+                <div class="phonologic-rhyme-multiple-match-column t_{{$templateIndex}}">
+                {{range $index, $_ := .Column2}}
+                    <div id="match-{{$index}}" class="speak-word" draggable="true" ondragstart="drag(event)" onclick="speak('{{.}}')">{{.}}</div>
+                {{end}}
+                </div>
             </div>
             <button class="nextButton" onclick="nextQuestion('.phonologic-rhyme-multiple-match.t_{{$templateIndex}}')">Επόμενο</button>
         </div>

@@ -79,12 +79,23 @@ body {
 .phonologic-rhyme-multiple-match-column {
     display: block;
     float: left;
-    width: 50vh;
+    width: 60vh;
 }
-.phonologic-rhyme-multiple-match-column > .speak-word-short {
+.phonologic-rhyme-multiple-match {
+    margin: 30px;
+}
+.phonologic-rhyme-multiple-match-column > .speak-word {
     display: flex;
     margin-bottom: 13px;
-    max-width: 200px;
+    width: 250px;
+}
+.dropzone {
+    border: 1px solid #aaa;
+    width: 660px;
+}
+.dropzone > .speak-word {
+    margin: 0px;
+    width: 250px;
 }
 .phonologic-rhyme-pair-answer button {
     display: inline-flex;
@@ -137,32 +148,11 @@ body {
     background-color: var(--dark-blue-hover);
 }
 
-.dropzone {
-    border: 1px solid #aaa;
-    width: 500px;
-    margin-bottom: 10px;
-}
+
 
 .main-match {
     margin: 50px;
     font-size: 2.4rem;
-}
-
-.speak-word-short {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2em 1.2em;
-    font-size: 1.0rem;
-    font-weight: 500;
-    color: #fff;
-    background-color: var(--dark-blue);
-    border: none;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
 }
 
 .speak-word {
@@ -187,18 +177,6 @@ body {
     background-color: var(--dark-blue-hover);
 }
 
-.speak-word-short:before {
-    content: '';
-    display: inline-block;
-    height: 32px;
-    width: 32px;
-    margin-right: 8px;
-    background-image: url('/assets/speak.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-}
-
 .speak-word:before {
     content: '';
     display: inline-block;
@@ -212,6 +190,19 @@ body {
 }
 
 .speak-word.selected {
+    background-color: var(--dark-blue-selected);
+}
+
+.main-sentence {
+    background-color: white;
+    color: var(--grey);
+}
+
+.main-sentence button:hover{
+    background-color: #aaa;
+}
+
+.main-match {
     background-color: var(--dark-blue-selected);
 }
 

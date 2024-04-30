@@ -1,6 +1,13 @@
+let START_EXERCISE = 1;
+
 function speak(text) {
     var msg = new SpeechSynthesisUtterance(" "+text);
     msg.lang = 'el-GR';
+    var voices = window.speechSynthesis.getVoices();
+    // console.log(voices);
+    msg.pitch = 2;
+    msg.rate = 1;
+    msg.volume = 1;
     window.speechSynthesis.speak(msg);
 }
     
@@ -27,7 +34,7 @@ function submitAnswer(question, answer) {
 }
 
 function hideExercises() {
-    let selectedIndex = 3;
+    let selectedIndex = START_EXERCISE;
     let templateDivs = document.querySelectorAll('.template');
     for(let i = 0; i < templateDivs.length; i++) {
         if(i === selectedIndex) {
