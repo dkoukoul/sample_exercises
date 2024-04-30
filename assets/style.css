@@ -43,7 +43,7 @@ body {
     border-top: 3px solid #333;
 }
 
-.phonologic-rhyme-match-item button {
+.nextButton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -76,6 +76,16 @@ body {
     font-size: 16pt;
 }
 
+.phonologic-rhyme-multiple-match-column {
+    display: block;
+    float: left;
+    width: 50vh;
+}
+.phonologic-rhyme-multiple-match-column > .speak-word-short {
+    display: flex;
+    margin-bottom: 13px;
+    max-width: 200px;
+}
 .phonologic-rhyme-pair-answer button {
     display: inline-flex;
     align-items: center;

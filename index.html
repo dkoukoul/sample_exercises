@@ -47,26 +47,29 @@
                     <div class="speak-word" onclick="speak('{{.}}'); selectAnswer(this);">{{.}}</div>
                 {{end}}
                 </div>
-                <button onclick="nextQuestion('.phonologic-rhyme-match-item.t_{{$templateIndex}}')">Επόμενο</button>
+                <button class="nextButton" onclick="nextQuestion('.phonologic-rhyme-match-item.t_{{$templateIndex}}')">Επόμενο</button>
             </div>
             {{end}}
         </div>
         {{end}}
         
         <!-- Template 3 -->
-        {{range .PhonologicRhymeMultipleMatch}}
+        {{range $templateIndex, $_ := .PhonologicRhymeMultipleMatch}}
         <div class="phonologic-rhyme-multiple-match template">
             <h1>{{.Question}}</h1>
-            <div class="phonologic-rhyme-multiple-match-column">
+            <div class="phonologic-rhyme-multiple-match-column t_{{$templateIndex}}">
             {{range .Column1}}
                 <div class="dropzone">
                     <div class="speak-word-short" onclick="speak('{{.}}')">{{.}}</div>
                 </div>
             {{end}}
-            {{range .Column2}}
-                <div class="speak-word-short" draggable="true" ondragstart="drag(event)" onclick="speak('{{.}}')">{{.}}</div>
+            </div>
+            <div class="phonologic-rhyme-multiple-match-column t_{{$templateIndex}}">
+            {{range $index, $_ := .Column2}}
+                <div id="match-{{$index}}" class="speak-word-short" draggable="true" ondragstart="drag(event)" onclick="speak('{{.}}')">{{.}}</div>
             {{end}}
             </div>
+            <button class="nextButton" onclick="nextQuestion('.phonologic-rhyme-multiple-match.t_{{$templateIndex}}')">Επόμενο</button>
         </div>
         {{end}}
         
@@ -87,175 +90,15 @@
                     <div class="speak-word" onclick="speak('{{.}}'); selectAnswer(this);">{{.}}</div>
                 {{end}}
                 </div>
-                <button onclick="nextQuestion('.phonologic-rhyme-sentence-item')">Επόμενο</button>
+                <button class="nextButton" onclick="nextQuestion('.phonologic-rhyme-sentence-item')">Επόμενο</button>
             </div>
             {{end}}
         </div>
         {{end}}
-
     
     </div> <!-- content -->
     <div id="output"></div>
     
 </body>
 </html>
-<script>
-    function speak(text) {
-        var msg = new SpeechSynthesisUtterance(" "+text);
-        msg.lang = 'el-GR';
-        window.speechSynthesis.speak(msg);
-    }
-        
-    function submitAnswer(question, answer) {
-        fetch('/answer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'question': question,
-                'answer': answer
-            })
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        }).then(data => {
-            // Handle the response data here
-        }).catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-        });
-    }
-
-    function hideExercises() {
-        let selectedIndex = 1;
-        let templateDivs = document.querySelectorAll('.template');
-        for(let i = 0; i < templateDivs.length; i++) {
-            if(i === selectedIndex) {
-                templateDivs[i].style.display = 'block';
-            } else {
-                templateDivs[i].style.display = 'none';
-            }
-        }
-    }
-
-    hideExercises();
-
-    function nextExercise() {
-        console.log('Next exercise');
-        let templateDivs = document.querySelectorAll('.template');
-        let currentTemplate = 0;
-        for(let i = 0; i < templateDivs.length; i++) {
-            if (templateDivs[i].style.display === 'block') {
-                currentTemplate = i;
-                console.log(currentTemplate);
-                break;
-            }
-        }
-        templateDivs[currentTemplate].style.display = 'none';
-        templateDivs[(currentTemplate + 1) % templateDivs.length].style.display = 'block';
-    }
-
-    let currentQuestion = 0;
-    function updateQuestion(back = false, templateClass) {
-        let questions = document.querySelectorAll(templateClass);
-        console.log(`Template: ${templateClass}`);
-        let curQ, nexQ = 0;
-        if (back) {
-            curQ = currentQuestion + 1;
-            nexQ = currentQuestion;
-        } else {
-            curQ = currentQuestion - 1;
-            nexQ = currentQuestion;
-        }
-        console.log(`Questions: ${questions.length} next:${nexQ}`);
-        let currQuestion = document.querySelector(`${templateClass}.i_${curQ}`);
-        let nextQuestion = document.querySelector(`${templateClass}.i_${nexQ}`);
-
-        //Hide the current question
-        if (back) {
-            currQuestion.style.animation = 'slideOutToRight 0.6s forwards';
-            setTimeout(() => {
-                nextQuestion.style.display = 'block';
-                nextQuestion.style.animation = 'slideInFromLeft 0.6s backwards';
-            }, 600);
-        } else {
-            currQuestion.style.animation = 'slideOutToLeft 0.6s forwards';
-            setTimeout(() => {
-                nextQuestion.style.display = 'block';
-                nextQuestion.style.animation = 'slideInFromRight 0.6s backwards';
-            }, 600);
-        }
-        
-        setTimeout(() => {
-            currQuestion.style.display = 'none';
-        }, 600);
-        
-        //progressIndicator.textContent = `${currentQuestion + 1} / ${questions.length}`;
-    }
-
-    function nextQuestion(templateClass) {
-        console.log(templateClass);
-        let questions = document.querySelectorAll(templateClass);
-        if (currentQuestion === questions.length - 1) {
-            currentQuestion = 0;
-            nextExercise();
-            return;
-        }
-        currentQuestion = (currentQuestion + 1) % questions.length;
-        updateQuestion(false, templateClass);
-    }
-
-    function selectAnswer(element) {
-        let parent = element.parentNode;
-        let sameClassElements = parent.getElementsByClassName(element.className);
-        for (let i = 0; i < sameClassElements.length; i++) {
-            sameClassElements[i].classList.remove('selected');
-        }
-        element.classList.add('selected');
-    }
-
-    function drag(ev) {
-        ev.dataTransfer.setData("text", ev.target.id);
-    }
-
-    function allowDrop(ev) {
-        ev.preventDefault();
-    }
-
-    function drop(ev) {
-        ev.preventDefault();
-        var data = ev.dataTransfer.getData("text/plain");
-        var nodeCopy = document.createElement("div");
-        nodeCopy.textContent = data;
-        nodeCopy.classList.add("speak-word-short");
-        nodeCopy.className = "speak-word-short";
-        nodeCopy.setAttribute("draggable", "true");
-        nodeCopy.setAttribute("ondragstart", "drag(event)");  
-        ev.target.appendChild(nodeCopy);    
-
-    }
-
-    // Add event listeners to the dropzones
-    var dropzones = document.querySelectorAll('.dropzone');
-    dropzones.forEach(function(dropzone) {
-        dropzone.addEventListener('dragover', allowDrop);
-        dropzone.addEventListener('drop', drop);
-    });
-
-// function sendAnswers() {
-//     const radioButtons = document.querySelectorAll('input[type="radio"]');
-//     // Filter out the ones that are checked and map to their values
-//     const answers = Array.from(radioButtons)
-//         .filter(radio => radio.checked)
-//         .map(radio => radio.value);
-    
-//     // console.log(answers);
-//     var message = {
-//         type: 'AnswersSubmitted',
-//         answers: answers
-//     };
-//     window.chrome.webview.postMessage(message);
-// }
-</script>
+<script src="/assets/js/main.js"></script>
