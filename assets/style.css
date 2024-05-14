@@ -12,6 +12,13 @@ body {
     margin: 0;
     padding: 0;
     position: relative;
+    background-image: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), url('./5.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    opacity: 0.8;
+
 }
 
 .content {
@@ -33,6 +40,7 @@ body {
     border-top: 3px solid #333;
 }
 
+
 .phonologic-rhyme-match-answers {
     padding: 20px;
 }
@@ -52,13 +60,14 @@ body {
     font-weight: 500;
     color: #fff;
     background-color: var(--button);
+    background-color: rgb(225, 97, 47);
     border: none;
     border-radius: 4px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
     cursor: pointer;
     text-decoration: none;
     transition: background-color 0.3s ease;
-    margin-inline: 60px;
+    margin-inline: 450px;
 }
 
 .phonologic-rhyme-match-answers button:hover {
@@ -81,22 +90,30 @@ body {
     float: left;
     width: 60vh;
 }
+
 .phonologic-rhyme-multiple-match {
     margin: 30px;
 }
+
 .phonologic-rhyme-multiple-match-column > .speak-word {
     display: flex;
-    margin-bottom: 13px;
+    margin-bottom: 15px;
     width: 250px;
+    margin-left: 80px;
 }
+
 .dropzone {
     border: 1px solid #aaa;
     width: 660px;
+    margin-bottom: 13px;
+    margin-left: -30px;
 }
+
 .dropzone > .speak-word {
     margin: 0px;
     width: 250px;
 }
+
 .phonologic-rhyme-pair-answer button {
     display: inline-flex;
     align-items: center;
@@ -114,7 +131,6 @@ body {
     transition: background-color 0.3s ease;
     margin-inline: 10px;
 }
-
 
 .phonologic-rhyme-sentence-answers {
     padding: 20px;
@@ -135,6 +151,7 @@ body {
     font-weight: 500;
     color: #fff;
     background-color: var(--button);
+    background-color: rgb(225, 97, 47);
     border: none;
     border-radius: 4px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
@@ -147,8 +164,6 @@ body {
 .phonologic-rhyme-sentence-answers button:hover {
     background-color: var(--dark-blue-hover);
 }
-
-
 
 .main-match {
     margin: 50px;
@@ -164,6 +179,7 @@ body {
     font-weight: 500;
     color: #fff;
     background-color: var(--dark-blue);
+    background-color: rgb(81, 15, 234);
     border: none;
     border-radius: 4px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
@@ -175,6 +191,7 @@ body {
 
 .speak-word:hover {
     background-color: var(--dark-blue-hover);
+    background-color: cornflowerblue;
 }
 
 .speak-word:before {
@@ -189,8 +206,11 @@ body {
     background-size: contain;
 }
 
-.speak-word.selected {
+/* .speak-word.selected {
     background-color: var(--dark-blue-selected);
+} */
+.speak-word.selected {
+    background-color: rgb(208, 124, 14); /* Change this to your desired orange color */
 }
 
 .main-sentence {
@@ -204,6 +224,72 @@ body {
 
 .main-match {
     background-color: var(--dark-blue-selected);
+}
+
+.decoding-text-reading {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Align children horizontally */
+    position: relative; /* Make the parent container a positioned container */
+}
+
+.decoding-text-reading h1 {
+    padding-bottom: 10px;
+    border-bottom: 3px solid #333;
+    align-self: flex-start; /* Align at the start (top) of the container */
+    color: #333; /* Text color */
+    font-size: 35px; /* Font size */
+    margin-bottom: 50px; /* Bottom margin */
+}
+
+.decoding-text-reading pre {
+    background-color: #c2f0fb;  /*Background color */
+    border: 1px solid #ccc; /* Border */
+    padding: 20px; /* Padding */
+    font-family: 'Calibri', Courier, monospace; /* Font family */
+    font-size: 35px; /* Font size */
+    white-space: pre-wrap; /* Preserve line breaks */
+    word-wrap: break-word; /* Break long words */
+}
+
+.decoding-text-reading-redwords {
+    max-width: 800px; /* Adjust as needed */
+    max-height: 800px; /* Adjust as needed */
+}
+
+.decoding-text-reading-redwords-word {
+    display: inline-block;
+    margin-right: 100px; 
+    margin-bottom: 5px; 
+    white-space: nowrap; /* Prevent words from wrapping */
+    overflow: hidden; /* Hide overflow text */
+    text-overflow: ellipsis; /* Show ellipsis for overflow text */
+    font-family: 'Calibri', Courier, monospace; 
+    font-size: 30px; 
+}
+
+.nextButton-textreading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6em 1.2em;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--button);
+    background-color: rgb(225, 97, 47);
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.26);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    bottom: 10;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 15px; /* Adjust as needed */
 }
 
 @keyframes slideInFromRight {
